@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════
-//  GENTLE PATH MINI GAME  —  v4.4  (sharp canvas + brand plates)
+//  GENTLE PATH MINI GAME  —  v4.6  (updated game messages)
 // ═══════════════════════════════════════════════
 (function() {
   const canvas = document.getElementById('gpCanvas');
@@ -67,16 +67,16 @@
       button: "Let's Go →"
     },
     stages: {
-      lPlate: {title: 'L PLATE', detail: 'Learning begins. Log those hours.'},
-      logbook: {title: '📓 LOGBOOK', detail: 'Hours ticking faster now!'},
-      p1: {title: 'P1 PLATES!', detail: '75 hours logged. Provisional driver!'},
-      p2: {title: 'P2 PLATES!', detail: '120 hours. Almost there!'},
-      fullLicence: {title: '🏁 FULL LICENCE!', detail: 'You are a Gentle Path Driving Star!'}
+      lPlate: {title: 'L PLATE', detail: 'The learning has begun, now log those hours!'},
+      logbook: {title: 'LOGBOOK', detail: 'Those driving hours are adding up fast, keep going!'},
+      p1: {title: 'P1 PLATES SECURED!', detail: 'WOW! 75 hours logged - you now have your P1 plates!'},
+      p2: {title: 'P2 PLATES REACHED!', detail: "120 hours - you're almost there...now that you have your P2 plates!"},
+      fullLicence: {title: 'YOU HAVE YOUR FULL LICENCE!', detail: "Now you're a true Gentle Path Driving Star!"}
     },
     popups: {
-      slippery: {title: '💦 SLIPPERY!', detail: 'Forced lane slide — hang on!'},
+      slippery: {title: 'SLIPPERY!', detail: 'Oops!'},
       reversed: {title: '📱 CONTROLS REVERSED!', detail: 'Left is right. Right is left. Eyes on the road!'},
-      speedCamera: {title: '📸 SPEED CAMERA!', detail: '$264 fine 💸 — slowing down...'},
+      speedCamera: {title: 'SPEED CAMERA!', detail: 'Slow Down! You just got a $264 fine!'},
       cone: {title: '🚧 CONE!', detail: 'Watch the road!'},
       nightDriving: {title: '🌙 NIGHT DRIVING', detail: 'Visibility reduced — 15 night hours required!'},
       controlsNormal: '✅ Controls back to normal!',
@@ -84,17 +84,16 @@
       closeCall: '😅 Close call! +speed boost'
     },
     finish: {
-      title: 'Licence Earned!',
-      detail: 'Now for the real thing.',
-      bookButton: 'Book a Real Lesson →',
-      endlessButton: '🏁 Endless Mode',
-      replayButton: 'Play again'
+      title: 'CONGRATULATIONS!',
+      detail: 'You earned your full licence, now for the real thing.',
+      bookButton: 'Book a Real Lesson with Céline',
+      endlessButton: 'Keep Practising'
     },
     gameOver: {
-      title: 'Game Over',
-      detail: 'driven in Endless Mode',
-      bookButton: 'Book a Real Lesson →',
-      retryButton: 'Try again'
+      title: 'GAME OVER - Try Again',
+      detail: '',
+      bookButton: 'Book a Real Lesson with Céline',
+      retryButton: 'Keep Practising'
     }
   };
 
@@ -661,8 +660,7 @@
   // ══ SCREENS ══════════════════════════════════════════════
   function drawStart() {
     ctx.fillStyle='rgba(56,56,56,0.96)'; ctx.fillRect(0,0,W,H);
-    ctx.font='44px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText('🚗',W/2,H/2-112);
+    ctx.textAlign='center'; ctx.textBaseline='middle';
     ctx.fillStyle=COLORS.gold; ctx.font='bold 24px "Space Grotesk",sans-serif';
     wrapText(ctx,GAME_MESSAGES.start.title,W/2,H/2-76,W-56,27);
     ctx.fillStyle='rgba(237,237,237,0.84)'; ctx.font='13px Urbanist,sans-serif';
@@ -681,18 +679,16 @@
     } else {
       winPanelA=Math.min(1,winPanelA+dt*2.4);
       ctx.save(); ctx.globalAlpha=winPanelA;
-      ctx.fillStyle='rgba(56,56,56,0.97)'; ctx.beginPath(); ctx.roundRect(W/2-158,H/2-140,316,286,[18]); ctx.fill();
+      ctx.fillStyle='rgba(56,56,56,0.97)'; ctx.beginPath(); ctx.roundRect(W/2-158,H/2-140,316,250,[18]); ctx.fill();
       ctx.strokeStyle=COLORS.gold; ctx.lineWidth=2; ctx.stroke();
       ctx.font='34px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('🏆',W/2,H/2-104);
       ctx.fillStyle=COLORS.gold; ctx.font='bold 25px "Space Grotesk",sans-serif'; ctx.fillText(GAME_MESSAGES.finish.title,W/2,H/2-68);
-      ctx.fillStyle='rgba(237,237,237,0.82)'; ctx.font='14px Urbanist,sans-serif'; ctx.fillText(GAME_MESSAGES.finish.detail,W/2,H/2-44);
-      ctx.fillStyle=COLORS.coral; ctx.beginPath(); ctx.roundRect(W/2-112,H/2-28,224,46,[23]); ctx.fill();
-      ctx.fillStyle=COLORS.white; ctx.font='bold 15px Urbanist,sans-serif'; ctx.fillText(GAME_MESSAGES.finish.bookButton,W/2,H/2-5);
-      ctx.fillStyle='rgba(210,190,112,0.18)'; ctx.beginPath(); ctx.roundRect(W/2-102,H/2+30,204,42,[21]); ctx.fill();
+      ctx.fillStyle='rgba(237,237,237,0.82)'; ctx.font='13px Urbanist,sans-serif'; wrapText(ctx,GAME_MESSAGES.finish.detail,W/2,H/2-44,280,16);
+      ctx.fillStyle=COLORS.coral; ctx.beginPath(); ctx.roundRect(W/2-140,H/2-10,280,46,[23]); ctx.fill();
+      ctx.fillStyle=COLORS.white; ctx.font='bold 13px Urbanist,sans-serif'; ctx.fillText(GAME_MESSAGES.finish.bookButton,W/2,H/2+13);
+      ctx.fillStyle='rgba(210,190,112,0.18)'; ctx.beginPath(); ctx.roundRect(W/2-102,H/2+48,204,42,[21]); ctx.fill();
       ctx.strokeStyle='rgba(210,190,112,0.65)'; ctx.lineWidth=1.5; ctx.stroke();
-      ctx.fillStyle=COLORS.gold; ctx.font='bold 14px Urbanist,sans-serif'; ctx.fillText(GAME_MESSAGES.finish.endlessButton,W/2,H/2+51);
-      ctx.fillStyle='rgba(255,255,255,0.07)'; ctx.beginPath(); ctx.roundRect(W/2-62,H/2+86,124,34,[17]); ctx.fill();
-      ctx.fillStyle='rgba(237,237,237,0.6)'; ctx.font='13px Urbanist,sans-serif'; ctx.fillText(GAME_MESSAGES.finish.replayButton,W/2,H/2+103);
+      ctx.fillStyle=COLORS.gold; ctx.font='bold 14px Urbanist,sans-serif'; ctx.fillText(GAME_MESSAGES.finish.endlessButton,W/2,H/2+69);
       ctx.restore();
     }
   }
@@ -703,8 +699,8 @@
     ctx.fillStyle=COLORS.coral; ctx.font='bold 25px "Space Grotesk",sans-serif'; ctx.fillText(GAME_MESSAGES.gameOver.title,W/2,H/2-54);
     ctx.fillStyle=COLORS.gold; ctx.font='bold 34px Urbanist,sans-serif'; ctx.fillText(`${Math.floor(kmDriven)} km`,W/2,H/2-12);
     ctx.fillStyle='rgba(237,237,237,0.76)'; ctx.font='14px Urbanist,sans-serif'; ctx.fillText(GAME_MESSAGES.gameOver.detail,W/2,H/2+16);
-    ctx.fillStyle=COLORS.coral; ctx.beginPath(); ctx.roundRect(W/2-112,H/2+36,224,46,[23]); ctx.fill();
-    ctx.fillStyle=COLORS.white; ctx.font='bold 15px Urbanist,sans-serif'; ctx.fillText(GAME_MESSAGES.gameOver.bookButton,W/2,H/2+59);
+    ctx.fillStyle=COLORS.coral; ctx.beginPath(); ctx.roundRect(W/2-140,H/2+36,280,46,[23]); ctx.fill();
+    ctx.fillStyle=COLORS.white; ctx.font='bold 13px Urbanist,sans-serif'; ctx.fillText(GAME_MESSAGES.gameOver.bookButton,W/2,H/2+59);
     ctx.fillStyle='rgba(255,255,255,0.07)'; ctx.beginPath(); ctx.roundRect(W/2-62,H/2+96,124,34,[17]); ctx.fill();
     ctx.fillStyle='rgba(237,237,237,0.6)'; ctx.font='13px Urbanist,sans-serif'; ctx.fillText(GAME_MESSAGES.gameOver.retryButton,W/2,H/2+113);
   }
@@ -870,14 +866,13 @@
     }
     if(gamePhase==='win'){
       if(winPhase===1){
-        if(tx>W/2-112&&tx<W/2+112&&ty>H/2-28&&ty<H/2+18) openBooking();
-        if(tx>W/2-102&&tx<W/2+102&&ty>H/2+30&&ty<H/2+72){gamePhase='endless';kmDriven=0;endlessLives=3;endlessHitCool=0;obstacles=[];confetti=[];speed=3.5;obsCool=1.0;}
-        if(tx>W/2-62&&tx<W/2+62&&ty>H/2+86&&ty<H/2+120) gamePhase='start';
+        if(tx>W/2-140&&tx<W/2+140&&ty>H/2-10&&ty<H/2+36) openBooking();
+        if(tx>W/2-102&&tx<W/2+102&&ty>H/2+48&&ty<H/2+90){gamePhase='endless';kmDriven=0;endlessLives=3;endlessHitCool=0;obstacles=[];confetti=[];speed=3.5;obsCool=1.0;}
       }
       return;
     }
     if(gamePhase==='gameover'){
-      if(tx>W/2-112&&tx<W/2+112&&ty>H/2+36&&ty<H/2+82) openBooking();
+      if(tx>W/2-140&&tx<W/2+140&&ty>H/2+36&&ty<H/2+82) openBooking();
       if(tx>W/2-62&&tx<W/2+62&&ty>H/2+96&&ty<H/2+130) gamePhase='start';
       return;
     }
