@@ -62,6 +62,7 @@
     }
 
     .canvas-frame {
+      position: relative;
       display: inline-block;
       max-width: 100%;
       overflow: hidden;
@@ -69,6 +70,40 @@
       border-radius: 18px;
       box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
       line-height: 0;
+    }
+
+    .start-copy {
+      position: absolute;
+      z-index: 2;
+      top: 52px;
+      left: 50%;
+      width: calc(100% - 40px);
+      max-width: 340px;
+      transform: translateX(-50%);
+      pointer-events: none;
+      font-family: "Urbanist", Arial, sans-serif;
+      line-height: 1.15;
+      text-align: center;
+    }
+
+    .start-copy.is-hidden {
+      display: none;
+    }
+
+    .start-title {
+      margin: 0 0 18px;
+      color: var(--brand-gold);
+      font-size: clamp(30px, 7vw, 40px);
+      font-weight: 800;
+      line-height: 1.04;
+    }
+
+    .start-intro {
+      margin: 0;
+      color: rgba(237, 237, 237, 0.9);
+      font-size: clamp(15px, 3.7vw, 20px);
+      font-weight: 600;
+      line-height: 1.25;
     }
 
     .game-status-slot {
@@ -141,6 +176,19 @@
         margin-bottom: 5px;
       }
 
+      .start-copy {
+        top: 48px;
+        width: calc(100% - 32px);
+      }
+
+      .start-title {
+        font-size: clamp(28px, 8vw, 36px);
+      }
+
+      .start-intro {
+        font-size: clamp(14px, 4vw, 18px);
+      }
+
       .game-status-title {
         font-size: 16px;
       }
@@ -184,6 +232,20 @@
       .canvas-frame {
         border-radius: 14px;
       }
+
+      .start-copy {
+        top: 24px;
+        max-width: 540px;
+      }
+
+      .start-title {
+        margin-bottom: 10px;
+        font-size: 34px;
+      }
+
+      .start-intro {
+        font-size: 17px;
+      }
     }
 
     @media (prefers-reduced-motion: reduce) {
@@ -214,6 +276,10 @@
     </div>
 
     <div class="canvas-frame">
+      <div id="gpStartCopy" class="start-copy" aria-hidden="true">
+        <h1 class="start-title">Become a Gentle Path Driving Star!</h1>
+        <p class="start-intro">Collect the L and P plates along your journey and don't forget to log your driving hours!</p>
+      </div>
       <canvas
         id="gpCanvas"
         width="380"
@@ -226,5 +292,30 @@
   </main>
 
   <script src="game-v2.js"></script>
+  <script>
+    (function () {
+      const canvas = document.getElementById('gpCanvas');
+      const startCopy = document.getElementById('gpStartCopy');
+      if (!canvas || !startCopy) return;
+
+      function hideStartCopyOnStart(event) {
+        const rect = canvas.getBoundingClientRect();
+        const point = event.changedTouches ? event.changedTouches[0] : event;
+        const x = (point.clientX - rect.left) * (canvas.width / (window.devicePixelRatio || 1)) / rect.width;
+        const y = (point.clientY - rect.top) * (canvas.height / (window.devicePixelRatio || 1)) / rect.height;
+        const logicalWidth = rect.width > rect.height ? 640 : 380;
+        const logicalHeight = rect.width > rect.height ? 360 : 540;
+        const scaledX = x * logicalWidth / (canvas.width / (window.devicePixelRatio || 1));
+        const scaledY = y * logicalHeight / (canvas.height / (window.devicePixelRatio || 1));
+
+        if (scaledX > logicalWidth / 2 - 84 && scaledX < logicalWidth / 2 + 84 && scaledY > logicalHeight / 2 + 30 && scaledY < logicalHeight / 2 + 78) {
+          startCopy.classList.add('is-hidden');
+        }
+      }
+
+      canvas.addEventListener('click', hideStartCopyOnStart);
+      canvas.addEventListener('touchend', hideStartCopyOnStart, {passive: true});
+    })();
+  </script>
 </body>
 </html>
