@@ -61,9 +61,7 @@
   // ═══════════════════════════════════════════════════════════
   const GAME_MESSAGES = {
     start: {
-      title: 'Become a Gentle Path Driving Star!',
-      line1: 'Collect the L and P plates along your journey.',
-      line2: "Don't forget to log your driving hours!",
+      controls: 'use keyboard arrows ← → to drive · Tap left or right on mobile',
       button: "Let's Go →"
     },
     stages: {
@@ -661,11 +659,8 @@
   function drawStart() {
     ctx.fillStyle='rgba(56,56,56,0.96)'; ctx.fillRect(0,0,W,H);
     ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillStyle=COLORS.gold; ctx.font='bold 24px "Space Grotesk",sans-serif';
-    wrapText(ctx,GAME_MESSAGES.start.title,W/2,H/2-76,W-56,27);
-    ctx.fillStyle='rgba(237,237,237,0.84)'; ctx.font='13px Urbanist,sans-serif';
-    ctx.fillText(GAME_MESSAGES.start.line1,W/2,H/2-16);
-    ctx.fillText(GAME_MESSAGES.start.line2,W/2,H/2+3);
+    ctx.fillStyle='rgba(237,237,237,0.92)'; ctx.font='bold 16px Urbanist,sans-serif';
+    wrapText(ctx,GAME_MESSAGES.start.controls,W/2,H/2-38,W-54,21);
     ctx.fillStyle=COLORS.coral; ctx.beginPath(); ctx.roundRect(W/2-84,H/2+30,168,48,[24]); ctx.fill();
     ctx.fillStyle=COLORS.white; ctx.font='bold 18px Urbanist,sans-serif'; ctx.fillText(GAME_MESSAGES.start.button,W/2,H/2+54);
   }
