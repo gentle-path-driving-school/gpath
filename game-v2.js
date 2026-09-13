@@ -7,7 +7,7 @@
   const announcementPanel = document.getElementById('gpAnnouncement');
   const announcementTitle = document.getElementById('gpAnnouncementTitle');
   const announcementDetail = document.getElementById('gpAnnouncementDetail');
-  const landscapeMedia = window.matchMedia('(orientation: landscape) and (max-width: 950px)');
+  const landscapeMedia = window.matchMedia('(orientation: landscape) and (max-width: 950px) and (pointer: coarse)');
   let landscapeMode = landscapeMedia.matches;
 
   canvas.width = landscapeMode ? 640 : 380;
