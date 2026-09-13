@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════
-//  GENTLE PATH MINI GAME  —  v4.3  (brand refresh)
+//  GENTLE PATH MINI GAME  —  v4.4  (sharp canvas + brand plates)
 // ═══════════════════════════════════════════════
 (function() {
   const canvas = document.getElementById('gpCanvas');
@@ -9,15 +9,30 @@
   const announcementDetail = document.getElementById('gpAnnouncementDetail');
   const landscapeMedia = window.matchMedia('(orientation: landscape) and (max-width: 950px) and (pointer: coarse)');
   let landscapeMode = landscapeMedia.matches;
-
-  canvas.width = landscapeMode ? 640 : 380;
-  canvas.height = landscapeMode ? 360 : 540;
-
   const ctx = canvas.getContext('2d');
-  let W = canvas.width, H = canvas.height;
+  let W = landscapeMode ? 640 : 380;
+  let H = landscapeMode ? 360 : 540;
+  let pixelRatio = 1;
   let LANE_W = W/3;
   let LANES = [LANE_W*0.5, LANE_W*1.5, LANE_W*2.5];
   const BASE_HR = 4, BONUS_HR = 8;
+
+  function getPixelRatio() {
+    return Math.min(Math.max(window.devicePixelRatio || 1, 1), 3);
+  }
+
+  function configureCanvasResolution() {
+    pixelRatio = getPixelRatio();
+    canvas.width = Math.round(W * pixelRatio);
+    canvas.height = Math.round(H * pixelRatio);
+    canvas.style.width = `${W}px`;
+    canvas.style.aspectRatio = `${W} / ${H}`;
+    ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = 'high';
+  }
+
+  configureCanvasResolution();
 
   // Gentle Path website brand palette.
   const COLORS = {
@@ -31,6 +46,15 @@
     black: '#181818'
   };
 
+  const PLATE_IMAGES = {
+    L: new Image(),
+    P: new Image()
+  };
+  PLATE_IMAGES.L.decoding = 'async';
+  PLATE_IMAGES.P.decoding = 'async';
+  PLATE_IMAGES.L.src = 'gp-icon-l-digital.png';
+  PLATE_IMAGES.P.src = 'gp-icon-p-digital.png';
+
   // ═══════════════════════════════════════════════════════════
   // EDIT POPUP AND END-SCREEN MESSAGES HERE
   // Change only the words between quotation marks, then commit the file.
@@ -43,10 +67,10 @@
       button: "Let's Go →"
     },
     stages: {
-      lPlate: {title: 'L PLATE 🟨', detail: 'Learning begins. Log those hours.'},
+      lPlate: {title: 'L PLATE', detail: 'Learning begins. Log those hours.'},
       logbook: {title: '📓 LOGBOOK', detail: 'Hours ticking faster now!'},
-      p1: {title: '🔴 P1 PLATES!', detail: '75 hours logged. Provisional driver!'},
-      p2: {title: '🟢 P2 PLATES!', detail: '120 hours. Almost there!'},
+      p1: {title: 'P1 PLATES!', detail: '75 hours logged. Provisional driver!'},
+      p2: {title: 'P2 PLATES!', detail: '120 hours. Almost there!'},
       fullLicence: {title: '🏁 FULL LICENCE!', detail: 'You are a Gentle Path Driving Star!'}
     },
     popups: {
@@ -161,7 +185,8 @@
     const nextLandscapeMode = landscapeMedia.matches;
     const nextWidth = nextLandscapeMode ? 640 : 380;
     const nextHeight = nextLandscapeMode ? 360 : 540;
-    if (nextWidth === W && nextHeight === H) return;
+    const nextPixelRatio = getPixelRatio();
+    if (nextWidth === W && nextHeight === H && nextPixelRatio === pixelRatio) return;
 
     const oldWidth = W;
     const oldHeight = H;
@@ -170,10 +195,9 @@
     const verticalScale = nextHeight / oldHeight;
 
     landscapeMode = nextLandscapeMode;
-    canvas.width = nextWidth;
-    canvas.height = nextHeight;
     W = nextWidth;
     H = nextHeight;
+    configureCanvasResolution();
     LANE_W = W / 3;
     LANES = [LANE_W * 0.5, LANE_W * 1.5, LANE_W * 2.5];
 
@@ -293,15 +317,25 @@
     return 'hatchback';
   }
 
+  function drawBrandedPlate(kind, x, y, size) {
+    const image = PLATE_IMAGES[kind];
+    if (image && image.complete && image.naturalWidth > 0) {
+      ctx.drawImage(image, x-size/2, y-size/2, size, size);
+      return;
+    }
+
+    // A small matching fallback appears only while the PNG finishes loading.
+    ctx.fillStyle=kind==='L'?COLORS.gold:COLORS.coral;
+    ctx.beginPath(); ctx.roundRect(x-size/2,y-size/2,size,size,[size*0.15]); ctx.fill();
+    ctx.fillStyle=kind==='L'?COLORS.green:COLORS.light;
+    ctx.font=`bold ${Math.round(size*0.68)}px Urbanist,sans-serif`;
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText(kind,x,y+size*0.03);
+  }
+
   function drawPlate(h) {
     if(mainStage<1) return;
-    let pc=mainStage>=4?COLORS.green:mainStage>=3?COLORS.coral:COLORS.gold;
-    let pt=mainStage>=3?'P':'L';
-    ctx.fillStyle=pc;
-    ctx.beginPath(); ctx.roundRect(-10,h/2-13,20,10,[2]); ctx.fill();
-    ctx.fillStyle=pt==='L'?COLORS.black:COLORS.white;
-    ctx.font='bold 8px Urbanist,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText(pt,0,h/2-8);
+    drawBrandedPlate(mainStage>=3?'P':'L',0,h/2-10,14);
   }
 
   function drawInstructor(w,h) {
@@ -425,14 +459,15 @@
     ctx.save(); ctx.translate(c.x,c.y);
     const g=ctx.createRadialGradient(0,0,4,0,0,30); g.addColorStop(0,c.color+'66'); g.addColorStop(1,'transparent');
     ctx.fillStyle=g; ctx.fillRect(-32,-32,64,64);
-    ctx.fillStyle=c.color; ctx.beginPath(); ctx.arc(0,0,23,0,Math.PI*2); ctx.fill();
-    ctx.strokeStyle='rgba(255,255,255,0.8)'; ctx.lineWidth=2.5; ctx.stroke();
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    switch(c.stage){
-      case 0: ctx.fillStyle=COLORS.black; ctx.font='bold 17px Urbanist,sans-serif'; ctx.fillText('L',0,1); break;
-      case 1: ctx.font='18px sans-serif'; ctx.fillText('📓',0,1); break;
-      case 2: case 3: ctx.fillStyle=COLORS.white; ctx.font='bold 17px Urbanist,sans-serif'; ctx.fillText('P',0,1); break;
-      default: ctx.font='18px sans-serif'; ctx.fillText('🏁',0,1); break;
+    const plateKind=c.stage===0?'L':(c.stage===2||c.stage===3?'P':null);
+    if(plateKind){
+      drawBrandedPlate(plateKind,0,0,46);
+    } else {
+      ctx.fillStyle=c.color; ctx.beginPath(); ctx.arc(0,0,23,0,Math.PI*2); ctx.fill();
+      ctx.strokeStyle='rgba(255,255,255,0.8)'; ctx.lineWidth=2.5; ctx.stroke();
+      ctx.textAlign='center'; ctx.textBaseline='middle';
+      if(c.stage===1){ctx.font='18px sans-serif';ctx.fillText('📓',0,1);}
+      else{ctx.font='18px sans-serif';ctx.fillText('🏁',0,1);}
     }
     ctx.restore();
   }
