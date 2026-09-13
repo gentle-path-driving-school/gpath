@@ -46,18 +46,19 @@
     }
 
     .game-heading {
-      margin: 0 auto 6px;
+      margin: 0 auto 2px;
       max-width: 440px;
       font-family: "Urbanist", Arial, sans-serif;
     }
 
     .eyebrow {
-      margin: 0 0 3px;
+      margin: 0 0 4px;
       color: var(--brand-gold);
       font-family: "Urbanist", Arial, sans-serif;
-      font-size: 10px;
+      font-size: clamp(30px, 7vw, 42px);
       font-weight: 800;
-      letter-spacing: 3px;
+      line-height: 1.05;
+      letter-spacing: 1.5px;
       text-transform: uppercase;
     }
 
@@ -110,8 +111,8 @@
       display: flex;
       width: 380px;
       max-width: 100%;
-      min-height: 82px;
-      margin: 0 auto 6px;
+      min-height: 0;
+      margin: 0 auto;
       align-items: flex-end;
     }
 
@@ -120,6 +121,7 @@
       width: 100%;
       min-height: 74px;
       padding: 10px 14px 9px;
+      display: none;
       visibility: hidden;
       border: 2.5px solid var(--status-color);
       border-top-width: 4px;
@@ -134,9 +136,11 @@
     }
 
     .game-status.is-visible {
+      display: block;
       visibility: visible;
       opacity: 1;
       transform: translateY(0);
+      margin-bottom: 6px;
     }
 
     .game-status-title {
@@ -173,7 +177,11 @@
       }
 
       .game-heading {
-        margin-bottom: 5px;
+        margin-bottom: 2px;
+      }
+
+      .eyebrow {
+        font-size: clamp(28px, 8vw, 38px);
       }
 
       .start-copy {
@@ -206,8 +214,8 @@
 
       .game-status-slot {
         width: 640px;
-        min-height: 76px;
-        margin-bottom: 6px;
+        min-height: 0;
+        margin: 0 auto;
       }
 
       .game-status {
@@ -258,7 +266,7 @@
 <body>
   <main class="game-section">
     <header class="game-heading">
-      <h3 class="eyebrow"><em>Just For Fun...</em></h3>
+      <h1 class="eyebrow"><em>Just For Fun...</em></h1>
     </header>
 
     <div class="game-status-slot">
