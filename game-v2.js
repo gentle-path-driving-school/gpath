@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════
-//  GENTLE PATH MINI GAME  —  v4.1  (results panel above road)
+//  GENTLE PATH MINI GAME  —  v4.2  (responsive results + landscape)
 // ═══════════════════════════════════════════════
 (function() {
   const canvas = document.getElementById('gpCanvas');
@@ -7,10 +7,16 @@
   const announcementPanel = document.getElementById('gpAnnouncement');
   const announcementTitle = document.getElementById('gpAnnouncementTitle');
   const announcementDetail = document.getElementById('gpAnnouncementDetail');
+  const landscapeMedia = window.matchMedia('(orientation: landscape) and (max-width: 950px)');
+  let landscapeMode = landscapeMedia.matches;
+
+  canvas.width = landscapeMode ? 640 : 380;
+  canvas.height = landscapeMode ? 360 : 540;
+
   const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
-  const LANE_W = W/3;
-  const LANES = [LANE_W*0.5, LANE_W*1.5, LANE_W*2.5];
+  let W = canvas.width, H = canvas.height;
+  let LANE_W = W/3;
+  let LANES = [LANE_W*0.5, LANE_W*1.5, LANE_W*2.5];
   const BASE_HR = 4, BONUS_HR = 8;
 
   // Use the embedding Squarespace site's current domain so this continues to
@@ -108,6 +114,79 @@
   let ann  = {text:'', subtext:'', color:'#F5C400', timer:0, max:160};
   let toastQueue = [];
   let keys = {}, spawnTimer = null;
+  let viewportResizeTimer = null;
+
+  function laneIndexForEntity(entity, oldLaneWidth) {
+    if (Number.isInteger(entity?.lane)) return Math.max(0, Math.min(2, entity.lane));
+    if (!Number.isFinite(entity?.x) || !oldLaneWidth) return 1;
+    return Math.max(0, Math.min(2, Math.round(entity.x / oldLaneWidth - 0.5)));
+  }
+
+  function reflowRoadEntity(entity, oldLaneWidth, verticalScale) {
+    if (!entity) return;
+    const entityLane = laneIndexForEntity(entity, oldLaneWidth);
+    entity.x = LANES[entityLane];
+    if (Number.isFinite(entity.y)) entity.y *= verticalScale;
+  }
+
+  function resizeCanvasForViewport() {
+    const nextLandscapeMode = landscapeMedia.matches;
+    const nextWidth = nextLandscapeMode ? 640 : 380;
+    const nextHeight = nextLandscapeMode ? 360 : 540;
+    if (nextWidth === W && nextHeight === H) return;
+
+    const oldWidth = W;
+    const oldHeight = H;
+    const oldLaneWidth = LANE_W;
+    const horizontalScale = nextWidth / oldWidth;
+    const verticalScale = nextHeight / oldHeight;
+
+    landscapeMode = nextLandscapeMode;
+    canvas.width = nextWidth;
+    canvas.height = nextHeight;
+    W = nextWidth;
+    H = nextHeight;
+    LANE_W = W / 3;
+    LANES = [LANE_W * 0.5, LANE_W * 1.5, LANE_W * 2.5];
+
+    if (Number.isInteger(lane)) {
+      lane = Math.max(0, Math.min(2, lane));
+      playerX = LANES[lane];
+      targetX = LANES[lane];
+      playerVX = 0;
+    }
+
+    reflowRoadEntity(nigelToken, oldLaneWidth, verticalScale);
+    reflowRoadEntity(celineRescue, oldLaneWidth, verticalScale);
+    reflowRoadEntity(collectible, oldLaneWidth, verticalScale);
+    if (Array.isArray(obstacles)) obstacles.forEach(item => reflowRoadEntity(item, oldLaneWidth, verticalScale));
+
+    if (Array.isArray(particles)) particles.forEach(item => {
+      item.x *= horizontalScale;
+      item.y *= verticalScale;
+    });
+    if (Array.isArray(exhaustTrail)) exhaustTrail.forEach(item => {
+      item.x *= horizontalScale;
+      item.y *= verticalScale;
+    });
+    if (Array.isArray(confetti)) confetti.forEach(item => {
+      item.x *= horizontalScale;
+      item.y *= verticalScale;
+    });
+    if (Number.isFinite(winY)) winY *= verticalScale;
+
+    lastTime = 0;
+    syncAnnouncementPanel();
+  }
+
+  function scheduleCanvasResize() {
+    clearTimeout(viewportResizeTimer);
+    viewportResizeTimer = setTimeout(resizeCanvasForViewport, 120);
+  }
+
+  window.addEventListener('resize', scheduleCanvasResize, {passive:true});
+  if (landscapeMedia.addEventListener) landscapeMedia.addEventListener('change', scheduleCanvasResize);
+  else if (landscapeMedia.addListener) landscapeMedia.addListener(scheduleCanvasResize);
 
   function syncAnnouncementPanel() {
     if (!announcementPanel || !announcementTitle || !announcementDetail) return;
@@ -634,7 +713,7 @@
     updateConfetti();
     confetti.forEach(c=>{ctx.save();ctx.translate(c.x,c.y);ctx.rotate(c.r);ctx.fillStyle=c.color;ctx.globalAlpha=0.85;ctx.fillRect(-c.size/2,-c.size*0.3,c.size,c.size*0.6);ctx.restore();});
     if(winPhase===0){
-      winY-=660*dt; updateExhaust(playerX,winY); drawF1(playerX,winY);
+      winY-=660*(H/540)*dt; updateExhaust(playerX,winY); drawF1(playerX,winY);
       if(winY<-90){winPhase=1;exhaustTrail=[];}
     } else {
       winPanelA=Math.min(1,winPanelA+dt*2.4);
@@ -710,6 +789,7 @@
     // ── SPEED ──
     speed=isEndless?Math.min(9,3.5+kmDriven*0.012):Math.min(5.8,2.8+mainStage*0.38);
     const effSpd=pulloverActive?0:(camSlow>0?speed*0.35:speed);
+    const verticalTravelScale=(H-64)/476;
     roadOffset+=effSpd*dt*60;
     if(camSlow>0) camSlow-=dt;
     if(hourFlash>0) hourFlash=Math.max(0,hourFlash-dt*2);
@@ -781,7 +861,7 @@
 
     // ── NIGEL TOKEN (initial) ──
     if(!nigelOnBoard&&!celineOnBoard&&nigelToken){
-      nigelToken.y+=(effSpd+2)*dt*60;
+      nigelToken.y+=(effSpd+2)*dt*60*verticalTravelScale;
       if(Math.abs(nigelToken.x-playerX)<30&&Math.abs(nigelToken.y-(H-100))<42){
         nigelOnBoard=true; nigelToken=null;
         hoursActive=true;
@@ -804,7 +884,7 @@
       }
     }
     if(celineRescue){
-      celineRescue.y+=celineRescue.spd*dt*60;
+      celineRescue.y+=celineRescue.spd*dt*60*verticalTravelScale;
       if(Math.abs(celineRescue.x-playerX)<30&&Math.abs(celineRescue.y-(H-100))<42){
         celineOnBoard=true; nigelOnBoard=false; celineRescue=null; celineRescueActive=false;
         spawnParticles(playerX,H-100,'#B8B2D8');
@@ -820,7 +900,7 @@
     // ── MAIN COLLECTIBLES ──
     if(celineOnBoard&&!collectible&&mainStage<STAGES.length&&canSpawn()) spawnCollectible();
     if(collectible){
-      collectible.y+=(effSpd+2)*dt*60;
+      collectible.y+=(effSpd+2)*dt*60*verticalTravelScale;
       if(Math.abs(collectible.x-playerX)<30&&Math.abs(collectible.y-(H-100))<42){
         const s=STAGES[mainStage];
         showAnn(s.annText,s.annSub,s.color,170);
@@ -843,7 +923,7 @@
     if(obsCool<=0&&(nigelOnBoard||celineOnBoard||isEndless)){
       spawnObstacle(); obsCool=coolBase+Math.random()*0.92;
     }
-    obstacles.forEach(o=>o.y+=(effSpd+0.8)*dt*60);
+    obstacles.forEach(o=>o.y+=(effSpd+0.8)*dt*60*verticalTravelScale);
     obstacles=obstacles.filter(o=>o.y<H+30);
     if(endlessHitCool>0) endlessHitCool-=dt;
     for(let i=obstacles.length-1;i>=0;i--){

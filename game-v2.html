@@ -169,6 +169,51 @@
       }
     }
 
+    @media (orientation: landscape) and (max-width: 950px) {
+      .game-section {
+        min-height: 0;
+        padding: 8px 10px 6px;
+      }
+
+      .game-heading {
+        display: none;
+      }
+
+      .game-status-slot {
+        width: 640px;
+        min-height: 88px;
+        margin-bottom: 8px;
+      }
+
+      .game-status {
+        min-height: 80px;
+        padding: 10px 14px;
+      }
+
+      .game-status-title {
+        font-size: 18px;
+      }
+
+      .game-status-detail {
+        margin-top: 5px;
+        font-size: 12px;
+      }
+
+      .canvas-frame,
+      canvas {
+        width: 640px;
+      }
+
+      .canvas-frame {
+        border-radius: 14px;
+      }
+
+      .controls {
+        margin-top: 7px;
+        font-size: 10px;
+      }
+    }
+
     @media (prefers-reduced-motion: reduce) {
       * {
         scroll-behavior: auto !important;
