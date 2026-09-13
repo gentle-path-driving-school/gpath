@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, follow">
+  <title>Your Driving Journey | Gentle Path Driving Instruction</title>
+  <meta name="description" content="Play Gentle Path Driving Instruction's learner-driver journey game.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&amp;family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: dark;
+      --lavender: #7b6fb5;
+      --lavender-light: #aba4d4;
+      --cream: #faf7f0;
+      --dark: #1e1530;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      margin: 0;
+      min-width: 280px;
+      background: var(--dark);
+    }
+
+    body {
+      font-family: "Nunito", sans-serif;
+      color: var(--cream);
+    }
+
+    .game-section {
+      min-height: 100vh;
+      padding: 32px 16px 24px;
+      text-align: center;
+      background: linear-gradient(180deg, #1e1530 0%, #2a1845 100%);
+    }
+
+    .game-heading {
+      margin: 0 auto 22px;
+      max-width: 440px;
+    }
+
+    .eyebrow {
+      margin-bottom: 5px;
+      color: var(--lavender-light);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 3.5px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0 0 6px;
+      font-family: "Cormorant Garamond", serif;
+      font-size: clamp(30px, 8vw, 42px);
+      line-height: 1.08;
+    }
+
+    h1 em {
+      color: var(--lavender-light);
+    }
+
+    .intro {
+      margin: 0;
+      color: rgba(250, 247, 240, 0.68);
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    .canvas-frame {
+      display: inline-block;
+      max-width: 100%;
+      overflow: hidden;
+      border: 2px solid rgba(139, 130, 190, 0.3);
+      border-radius: 18px;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+      line-height: 0;
+    }
+
+    .game-status-slot {
+      display: flex;
+      width: 380px;
+      max-width: 100%;
+      min-height: 106px;
+      margin: 0 auto 12px;
+      align-items: flex-end;
+    }
+
+    .game-status {
+      --status-color: #f5c400;
+      width: 100%;
+      min-height: 94px;
+      padding: 14px 16px 13px;
+      visibility: hidden;
+      border: 2.5px solid var(--status-color);
+      border-top-width: 5px;
+      border-radius: 16px;
+      background: rgba(20, 14, 40, 0.96);
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+      opacity: 0;
+      line-height: 1.25;
+      transform: translateY(5px);
+      transition: opacity 160ms ease, transform 160ms ease, visibility 160ms;
+    }
+
+    .game-status.is-visible {
+      visibility: visible;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .game-status-title {
+      margin: 0;
+      color: var(--status-color);
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .game-status-detail {
+      margin: 8px 0 0;
+      color: rgba(250, 247, 240, 0.86);
+      font-size: 13px;
+    }
+
+    canvas {
+      display: block;
+      width: 380px;
+      max-width: 100%;
+      height: auto;
+      touch-action: none;
+    }
+
+    canvas:focus-visible {
+      outline: 3px solid #f5c400;
+      outline-offset: -4px;
+    }
+
+    .controls {
+      margin: 12px 0 0;
+      color: rgba(250, 247, 240, 0.42);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.6px;
+      line-height: 1.4;
+      text-transform: uppercase;
+    }
+
+    @media (max-width: 430px) {
+      .game-section {
+        padding-top: 24px;
+      }
+
+      .game-heading {
+        margin-bottom: 16px;
+      }
+
+      .intro {
+        font-size: 13px;
+      }
+
+      .game-status-title {
+        font-size: 18px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="game-section">
+    <header class="game-heading">
+      <div class="eyebrow">Just For Fun</div>
+      <h1>Your <em>Journey</em> — Play It</h1>
+      <p class="intro">Pick up Céline, earn your L and P plates, and finish as an F1 supercar.</p>
+    </header>
+
+    <div class="game-status-slot">
+      <section
+        id="gpAnnouncement"
+        class="game-status"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        aria-hidden="true"
+      >
+        <p id="gpAnnouncementTitle" class="game-status-title"></p>
+        <p id="gpAnnouncementDetail" class="game-status-detail"></p>
+      </section>
+    </div>
+
+    <div class="canvas-frame">
+      <canvas
+        id="gpCanvas"
+        width="380"
+        height="540"
+        tabindex="0"
+        role="application"
+        aria-label="Gentle Path driving journey game. Use the left and right arrow keys, or tap the left and right sides on a touchscreen."
+      ></canvas>
+    </div>
+
+    <p class="controls">← → Arrow keys &nbsp;·&nbsp; Tap left or right on mobile</p>
+  </main>
+
+  <script src="game-v2.js"></script>
+</body>
+</html>
