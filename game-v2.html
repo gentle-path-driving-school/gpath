@@ -4,18 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex, follow">
-  <title>Your Driving Journey | Gentle Path Driving Instruction</title>
+  <title>Become a Gentle Path Driving Star! | Gentle Path Driving School</title>
   <meta name="description" content="Play Gentle Path Driving Instruction's learner-driver journey game.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,600&amp;family=Nunito:wght@400;600;700;800&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&amp;family=Urbanist:ital,wght@0,400;0,600;0,700;0,800;1,700;1,800&amp;display=swap" rel="stylesheet">
   <style>
     :root {
       color-scheme: dark;
-      --lavender: #7b6fb5;
-      --lavender-light: #aba4d4;
-      --cream: #faf7f0;
-      --dark: #1e1530;
+      --brand-green: #546d61;
+      --brand-coral: #cd6a5b;
+      --brand-gold: #d2be70;
+      --brand-light: #ededed;
+      --brand-charcoal: #383838;
     }
 
     * {
@@ -26,58 +27,56 @@
     body {
       margin: 0;
       min-width: 280px;
-      background: var(--dark);
+      background: var(--brand-green);
     }
 
     body {
-      font-family: "Nunito", sans-serif;
-      color: var(--cream);
+      font-family: "Urbanist", sans-serif;
+      color: var(--brand-light);
     }
 
     .game-section {
       min-height: 100vh;
-      padding: 32px 16px 24px;
+      padding: 8px 16px;
       text-align: center;
-      background: linear-gradient(180deg, #1e1530 0%, #2a1845 100%);
+      background: linear-gradient(180deg, var(--brand-green) 0%, var(--brand-charcoal) 100%);
     }
 
     .game-heading {
-      margin: 0 auto 22px;
+      margin: 0 auto 6px;
       max-width: 440px;
     }
 
     .eyebrow {
-      margin-bottom: 5px;
-      color: var(--lavender-light);
-      font-size: 11px;
+      margin: 0 0 3px;
+      color: var(--brand-gold);
+      font-size: 10px;
       font-weight: 800;
-      letter-spacing: 3.5px;
+      letter-spacing: 3px;
       text-transform: uppercase;
     }
 
     h1 {
-      margin: 0 0 6px;
-      font-family: "Cormorant Garamond", serif;
-      font-size: clamp(30px, 8vw, 42px);
-      line-height: 1.08;
-    }
-
-    h1 em {
-      color: var(--lavender-light);
+      margin: 0 0 3px;
+      font-family: "Space Grotesk", sans-serif;
+      font-size: clamp(24px, 5.4vw, 32px);
+      font-weight: 700;
+      line-height: 1.05;
     }
 
     .intro {
       margin: 0;
-      color: rgba(250, 247, 240, 0.68);
-      font-size: 15px;
-      line-height: 1.45;
+      color: rgba(237, 237, 237, 0.82);
+      font-size: 13px;
+      font-weight: 600;
+      line-height: 1.3;
     }
 
     .canvas-frame {
       display: inline-block;
       max-width: 100%;
       overflow: hidden;
-      border: 2px solid rgba(139, 130, 190, 0.3);
+      border: 2px solid rgba(210, 190, 112, 0.55);
       border-radius: 18px;
       box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
       line-height: 0;
@@ -87,21 +86,21 @@
       display: flex;
       width: 380px;
       max-width: 100%;
-      min-height: 106px;
-      margin: 0 auto 12px;
+      min-height: 82px;
+      margin: 0 auto 6px;
       align-items: flex-end;
     }
 
     .game-status {
-      --status-color: #f5c400;
+      --status-color: #d2be70;
       width: 100%;
-      min-height: 94px;
-      padding: 14px 16px 13px;
+      min-height: 74px;
+      padding: 10px 14px 9px;
       visibility: hidden;
       border: 2.5px solid var(--status-color);
-      border-top-width: 5px;
+      border-top-width: 4px;
       border-radius: 16px;
-      background: rgba(20, 14, 40, 0.96);
+      background: rgba(56, 56, 56, 0.98);
       box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
       opacity: 0;
       line-height: 1.25;
@@ -118,14 +117,14 @@
     .game-status-title {
       margin: 0;
       color: var(--status-color);
-      font-size: 20px;
+      font-size: 18px;
       font-weight: 800;
     }
 
     .game-status-detail {
-      margin: 8px 0 0;
-      color: rgba(250, 247, 240, 0.86);
-      font-size: 13px;
+      margin: 5px 0 0;
+      color: rgba(237, 237, 237, 0.92);
+      font-size: 12px;
     }
 
     canvas {
@@ -137,42 +136,42 @@
     }
 
     canvas:focus-visible {
-      outline: 3px solid #f5c400;
+      outline: 3px solid var(--brand-gold);
       outline-offset: -4px;
     }
 
     .controls {
-      margin: 12px 0 0;
-      color: rgba(250, 247, 240, 0.42);
-      font-size: 11px;
+      margin: 6px 0 0;
+      color: rgba(237, 237, 237, 0.72);
+      font-size: 10px;
       font-weight: 700;
-      letter-spacing: 1.6px;
-      line-height: 1.4;
+      letter-spacing: 1.4px;
+      line-height: 1.25;
       text-transform: uppercase;
     }
 
     @media (max-width: 430px) {
       .game-section {
-        padding-top: 24px;
+        padding: 6px 10px;
       }
 
       .game-heading {
-        margin-bottom: 16px;
+        margin-bottom: 5px;
       }
 
       .intro {
-        font-size: 13px;
+        font-size: 12px;
       }
 
       .game-status-title {
-        font-size: 18px;
+        font-size: 16px;
       }
     }
 
     @media (orientation: landscape) and (max-width: 950px) {
       .game-section {
         min-height: 0;
-        padding: 8px 10px 6px;
+        padding: 6px 10px;
       }
 
       .game-heading {
@@ -181,13 +180,13 @@
 
       .game-status-slot {
         width: 640px;
-        min-height: 88px;
-        margin-bottom: 8px;
+        min-height: 76px;
+        margin-bottom: 6px;
       }
 
       .game-status {
-        min-height: 80px;
-        padding: 10px 14px;
+        min-height: 70px;
+        padding: 8px 14px;
       }
 
       .game-status-title {
@@ -209,7 +208,7 @@
       }
 
       .controls {
-        margin-top: 7px;
+        margin-top: 5px;
         font-size: 10px;
       }
     }
@@ -224,9 +223,9 @@
 <body>
   <main class="game-section">
     <header class="game-heading">
-      <div class="eyebrow">Just For Fun</div>
-      <h1>Your <em>Journey</em> — Play It</h1>
-      <p class="intro">Pick up Céline, earn your L and P plates, and finish as an F1 supercar.</p>
+      <h3 class="eyebrow"><em>Just For Fun...</em></h3>
+      <h1><strong>Become a Gentle Path Driving Star!</strong></h1>
+      <h2 class="intro">Collect the L and P plates along your journey and don't forget to log your driving hours!</h2>
     </header>
 
     <div class="game-status-slot">
