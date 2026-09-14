@@ -70,6 +70,26 @@
       line-height: 0;
     }
 
+    .canvas-frame::before,
+    .canvas-frame::after {
+      content: "";
+      position: absolute;
+      z-index: 1;
+      top: 0;
+      bottom: 0;
+      width: 19px;
+      background: var(--brand-charcoal);
+      pointer-events: none;
+    }
+
+    .canvas-frame::before {
+      left: 0;
+    }
+
+    .canvas-frame::after {
+      right: 0;
+    }
+
     .start-copy {
       position: absolute;
       z-index: 2;
