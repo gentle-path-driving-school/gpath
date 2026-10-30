@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════
-//  GENTLE PATH MINI GAME  —  v4  (Nigel Build)
+//  GENTLE PATH MINI GAME  —  v4
 // ═══════════════════════════════════════════════
 (function() {
   const canvas = document.getElementById('gpCanvas');
@@ -39,27 +39,8 @@
   function playSlide()   { playTone(440,280,'sine',0.12,0.4); }
   function playReverse() { playTone(330,330,'square',0.08,0.15); }
   function playFlash()   { playTone(1200,800,'sine',0.2,0.18); }
-  function playNigel()   { try{const ac=getAudio();[220,180,240,160].forEach((f,i)=>{const o=ac.createOscillator(),g=ac.createGain();o.type='sawtooth';o.connect(g);g.connect(ac.destination);o.frequency.value=f;const t=ac.currentTime+i*0.07;g.gain.setValueAtTime(0.12,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.22);o.start(t);o.stop(t+0.22);});}catch(e){} }
   function playCeline()  { try{const ac=getAudio();[523,659,784].forEach((f,i)=>{const o=ac.createOscillator(),g=ac.createGain();o.connect(g);g.connect(ac.destination);o.frequency.value=f;const t=ac.currentTime+i*0.1;g.gain.setValueAtTime(0.14,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.3);o.start(t);o.stop(t+0.3);});}catch(e){} }
   function playWin()     { try{const ac=getAudio();[523,659,784,1047].forEach((f,i)=>{const o=ac.createOscillator(),g=ac.createGain();o.connect(g);g.connect(ac.destination);o.frequency.value=f;const t=ac.currentTime+i*0.13;g.gain.setValueAtTime(0.15,t);g.gain.exponentialRampToValueAtTime(0.001,t+0.35);o.start(t);o.stop(t+0.35);});}catch(e){} }
-
-  // ══ NIGEL LINES ════════════════════════════════════════
-  const NIGEL_YELL = [
-    "INDICATE!! INDICATE!!",
-    "BRAKE! — NO — BRAKE!!",
-    "ARE YOU EVEN LOOKING?!",
-    "My nan drives faster than this!!",
-    "You call THAT a lane change?!"
-  ];
-  const NIGEL_MUTTER = [
-    "I had a beer before this. Helps me focus.",
-    "Roundabouts are just a suggestion.",
-    "Most accidents happen at night. Be one of the cool kids.",
-    "I failed my test four times. Builds character.",
-    "Indicating is for people who don't trust themselves.",
-    "My ex-wife said I was a bad communicator. She was wrong.",
-    "The other drivers are the problem. Not us."
-  ];
 
   // ══ STAGE DATA (post-Céline progression) ═════════════
   const STAGES = [
@@ -78,12 +59,7 @@
   let lane, playerX, targetX, playerVX, moveCool, speed, roadOffset, lastTime;
 
   // Instructor
-  let nigelOnBoard, celineOnBoard;
-  let nigelYells, nigelYellActive, nigelYellAnimTimer;
-  let nigelMutterTimer, nigelYellTimer, nigelYellPending;
-  let pulloverActive, pulloverTimer, pulloverLane, pulloverMidShown;
-  let celineRescue, celineRescueTimer, celineRescueActive;
-  let nigelToken;
+  let celineOnBoard, celineToken, celineTokenTimer;
 
   // Progression
   let mainStage, collectible, hours, hoursActive, logbookBonus;
@@ -91,9 +67,7 @@
 
   // Effects
   let obstacles, obsCool, particles, exhaustTrail, confetti;
-  let shakeAmt, nightAlpha, hourFlash=0;
-  let celineArrivalPending=false, celineArrivalTimer=0;
-  let nigelYellCooldown=0, nigelIntroTimer=0;
+  let shakeAmt, nightAlpha;
   let phoneReversed, phoneTimer, pudSlide, pudSlideLane, pudTimer;
   let camSlow, closeCooldown;
 
@@ -115,24 +89,19 @@
     gamePhase = 'playing';
     lane=1; playerX=LANES[1]; targetX=LANES[1]; playerVX=0;
     moveCool=0; speed=2.8; roadOffset=0; lastTime=0;
-    nigelOnBoard=false; celineOnBoard=false;
-    nigelYells=0; nigelYellActive=false; nigelYellAnimTimer=0;
-    nigelMutterTimer=5.33; nigelYellTimer=0; nigelYellPending=false;
-    pulloverActive=false; pulloverTimer=0; pulloverLane=0; pulloverMidShown=false;
-    celineRescue=null; celineRescueTimer=0; celineRescueActive=false;
-    nigelToken={x:LANES[Math.floor(Math.random()*3)], y:-36};
+    celineOnBoard=false; celineToken=null; celineTokenTimer=0;
     mainStage=0; collectible=null;
     hours=0; hoursActive=false; logbookBonus=false; nightShown=false;
     obstacles=[]; obsCool=2.67;
     particles=[]; exhaustTrail=[]; confetti=[];
-    shakeAmt=0; nightAlpha=0; hourFlash=0; celineArrivalPending=false; celineArrivalTimer=0; nigelYellCooldown=0; nigelIntroTimer=0;
+    shakeAmt=0; nightAlpha=0;
     phoneReversed=false; phoneTimer=0;
     pudSlide=false; pudSlideLane=1; pudTimer=0;
     camSlow=0; closeCooldown=0;
     winPhase=0; winY=0; winPanelA=0;
     kmDriven=0; endlessLives=3; endlessHitCool=0;
     ann={text:'',subtext:'',color:'#F5C400',timer:0,max:160};
-    toastQueue=[]; speechBubble=null;
+    toastQueue=[];
     clearTimeout(spawnTimer);
   }
 
@@ -186,9 +155,9 @@
   }
 
   function drawInstructor(w,h) {
-    if(!nigelOnBoard&&!celineOnBoard) return;
+    if(!celineOnBoard) return;
     ctx.font='10px sans-serif'; ctx.textBaseline='middle';
-    ctx.fillText(celineOnBoard?'👩‍⚕️':'😤', w/2-10, -h/2+9);
+    ctx.fillText('👩‍⚕️', w/2-10, -h/2+9);
   }
 
   function drawHatchback(x,y) {
@@ -292,57 +261,8 @@
     }
   }
 
-  // ══ RAGE LINES ══════════════════════════════════════════
-  function drawRageLines(x,y) {
-    const t=Date.now()/120;
-    ctx.save(); ctx.translate(x,y);
-    for(let i=0;i<8;i++){
-      const angle=(i/8)*Math.PI*2+t*0.18;
-      const len=16+Math.sin(t*3+i)*9;
-      const start=30;
-      ctx.strokeStyle='#FF3300'; ctx.lineWidth=2.5;
-      ctx.globalAlpha=Math.max(0, 0.6+Math.sin(t*4+i)*0.35);
-      ctx.beginPath();
-      ctx.moveTo(Math.cos(angle)*start,Math.sin(angle)*start);
-      ctx.lineTo(Math.cos(angle)*(start+len),Math.sin(angle)*(start+len));
-      ctx.stroke();
-    }
-    ctx.globalAlpha=0.9; ctx.fillStyle='#FF3300';
-    ctx.font='bold 16px Nunito,sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText('!!',0,-52);
-    ctx.restore();
-  }
-
-  // ══ TEARS / PULLOVER ════════════════════════════════════
-  function drawTears() {
-    ctx.save();
-    ctx.fillStyle='white'; ctx.font='bold 24px Nunito,sans-serif';
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText('Pulling over to cry.',W/2,H/2-14);
-    ctx.font='16px Nunito,sans-serif';
-    ctx.fillStyle='rgba(255,255,255,0.7)';
-    ctx.fillText('Nigel sits and seethes.',W/2,H/2+16);
-    ctx.restore();
-  }
-
-  // ══ NIGEL TOKEN ══════════════════════════════════════════
-  function drawNigelToken(tok) {
-    ctx.save(); ctx.translate(tok.x,tok.y);
-    const pulse=0.65+Math.sin(Date.now()/200)*0.35;
-    const g=ctx.createRadialGradient(0,0,4,0,0,34);
-    g.addColorStop(0,`rgba(255,60,0,${0.45*pulse})`); g.addColorStop(1,'transparent');
-    ctx.fillStyle=g; ctx.fillRect(-36,-36,72,72);
-    ctx.fillStyle='#CC3300'; ctx.beginPath(); ctx.arc(0,0,23,0,Math.PI*2); ctx.fill();
-    ctx.strokeStyle='rgba(255,160,100,0.85)'; ctx.lineWidth=2.5; ctx.stroke();
-    ctx.font='15px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText('😤',0,-4);
-    ctx.fillStyle='white'; ctx.font='bold 8px Nunito,sans-serif'; ctx.fillText('NIGEL',0,10);
-    ctx.fillStyle='rgba(255,220,200,0.8)'; ctx.font='5.5px Nunito,sans-serif'; ctx.fillText('Y.A.M.S.O.M.',0,20);
-    ctx.restore();
-  }
-
-  // ══ CÉLINE RESCUE TOKEN ══════════════════════════════════
-  function drawCelineRescue(tok) {
+  // ══ CÉLINE TOKEN ═════════════════════════════════════════
+  function drawCelineToken(tok) {
     ctx.save(); ctx.translate(tok.x,tok.y);
     const pulse=0.65+Math.sin(Date.now()/280)*0.35;
     const g=ctx.createRadialGradient(0,0,4,0,0,36);
@@ -384,7 +304,7 @@
   // ══ OBSTACLES ═══════════════════════════════════════════
   const OBS_TYPES=['cone','puddle','camera','cone','puddle','camera','cone','puddle','camera','cone','puddle','phone'];
   function spawnObstacle() {
-    const blocked=celineRescue?celineRescue.lane:(collectible?collectible.lane:(nigelToken?nigelToken.lane:-1));
+    const blocked=celineToken?celineToken.lane:(collectible?collectible.lane:-1);
     // Find lanes occupied by obstacles near the top (within 120px) to avoid unavoidable rows
     const nearTop=obstacles.filter(o=>o.y>-140&&o.y<60).map(o=>Math.round(o.x/LANE_W-0.5));
     const openLanes=[0,1,2].filter(ln=>ln!==blocked&&!nearTop.includes(ln));
@@ -498,18 +418,12 @@
       const pct=Math.min(1,hours/goal);
       const bx=W/2-78,by=40,bw=156,bh=9;
       ctx.fillStyle='rgba(255,255,255,0.12)'; ctx.beginPath(); ctx.roundRect(bx,by,bw,bh,[4]); ctx.fill();
-      ctx.fillStyle=hourFlash>0?`rgba(255,60,0,${0.4+hourFlash*0.6})`:'#F5C400';
+      ctx.fillStyle='#F5C400';
       ctx.beginPath(); ctx.roundRect(bx,by,bw*pct,bh,[4]); ctx.fill();
 
       ctx.fillStyle='rgba(255,255,255,0.65)'; ctx.font='bold 10px Nunito,sans-serif';
       ctx.textAlign='center'; ctx.textBaseline='middle';
       ctx.fillText(`${Math.floor(hours)} / ${goal} hrs`,W/2,by+bh/2);
-    }
-    // Nigel badge
-    if(nigelOnBoard&&!celineOnBoard){
-      ctx.fillStyle='rgba(200,40,0,0.88)'; ctx.beginPath(); ctx.roundRect(4,8,136,24,[12]); ctx.fill();
-      ctx.fillStyle='white'; ctx.font='bold 11px Nunito,sans-serif'; ctx.textAlign='left'; ctx.textBaseline='middle';
-      ctx.fillText('😤 NIGEL ON BOARD',10,20);
     }
     // Phone reversed badge
     if(phoneReversed){
@@ -584,27 +498,6 @@
     return lineY;
   }
 
-  // ══ SPEECH BUBBLE ════════════════════════════════════════
-  let speechBubble = null;
-  function showSpeech(msg, dur) { speechBubble = {msg, timer:dur||120}; }
-  function drawSpeechBubble(dt) {
-    if(!speechBubble||speechBubble.timer<=0) return;
-    const x=playerX, y=H-145;
-    const a=Math.min(1,speechBubble.timer/20);
-    ctx.save(); ctx.globalAlpha=a;
-    const pw=200, ph=44, px=Math.max(pw/2+6,Math.min(W-pw/2-6,x));
-    ctx.fillStyle='rgba(30,10,10,0.93)'; ctx.beginPath(); ctx.roundRect(px-pw/2,y-ph,pw,ph,[10]); ctx.fill();
-    ctx.strokeStyle='#FF4400'; ctx.lineWidth=1.5; ctx.beginPath(); ctx.roundRect(px-pw/2,y-ph,pw,ph,[10]); ctx.stroke();
-    // Tail
-    ctx.fillStyle='rgba(30,10,10,0.93)'; ctx.beginPath();
-    ctx.moveTo(px-8,y-2); ctx.lineTo(px+8,y-2); ctx.lineTo(px,y+10); ctx.closePath(); ctx.fill();
-    ctx.fillStyle='#FF6633'; ctx.font='bold 13px Nunito,sans-serif';
-    ctx.textAlign='center'; ctx.textBaseline='middle';
-    wrapText(ctx,speechBubble.msg,px,y-ph/2,180,16);
-    ctx.restore();
-    speechBubble.timer-=dt*60;
-  }
-
   // ══ SCREENS ══════════════════════════════════════════════
   function drawStart() {
     ctx.fillStyle='rgba(20,14,40,0.94)'; ctx.fillRect(0,0,W,H);
@@ -613,10 +506,8 @@
     ctx.fillStyle='#F5C400'; ctx.font='bold 26px Cormorant Garamond,serif';
     ctx.fillText('Your Driving Journey',W/2,H/2-68);
     ctx.fillStyle='rgba(250,246,238,0.72)'; ctx.font='14px Nunito,sans-serif';
-    ctx.fillText('Pick up Céline — or Nigel.',W/2,H/2-38);
+    ctx.fillText('Pick up Céline.',W/2,H/2-38);
     ctx.fillText('Earn your plates. Log your hours.',W/2,H/2-16);
-    ctx.fillStyle='rgba(255,100,60,0.9)'; ctx.font='bold 12px Nunito,sans-serif';
-    ctx.fillText('⚠️  Watch out for Nigel',W/2,H/2+8);
     ctx.fillStyle='#7B6FB5'; ctx.beginPath(); ctx.roundRect(W/2-84,H/2+30,168,48,[24]); ctx.fill();
     ctx.fillStyle='white'; ctx.font='bold 18px Nunito,sans-serif'; ctx.fillText("Let's Go →",W/2,H/2+54);
   }
@@ -668,9 +559,7 @@
 
     // Hours
     if(hoursActive&&isPlaying){
-      const rate=(nigelOnBoard&&!celineOnBoard)
-        ? (logbookBonus?BONUS_HR*0.12:BASE_HR*0.12)
-        : (logbookBonus?BONUS_HR:BASE_HR);
+      const rate=logbookBonus?BONUS_HR:BASE_HR;
       hours+=rate*dt;
     }
 
@@ -700,13 +589,9 @@
 
     // ── SPEED ──
     speed=isEndless?Math.min(9,3.5+kmDriven*0.012):Math.min(5.8,2.8+mainStage*0.38);
-    const effSpd=pulloverActive?0:(camSlow>0?speed*0.35:speed);
+    const effSpd=camSlow>0?speed*0.35:speed;
     roadOffset+=effSpd*dt*60;
     if(camSlow>0) camSlow-=dt;
-    if(hourFlash>0) hourFlash=Math.max(0,hourFlash-dt*2);
-    if(nigelYellCooldown>0){nigelYellCooldown-=dt;if(nigelYellCooldown<=0)nigelYellPending=false;}
-    if(nigelIntroTimer>0){nigelIntroTimer-=dt;if(nigelIntroTimer<=0)showToast('😤 "Right. Let\'s get this over with."',110);}
-    if(celineArrivalPending&&celineArrivalTimer>0){celineArrivalTimer-=dt;if(celineArrivalTimer<=0){celineArrivalPending=false;playCeline();showAnn('👩\u200d⚕️ CÉLINE ON BOARD!','Hi, welcome to Gentle Path. Let\'s make progress.','#B8B2D8',180);}}
 
     // ── TIMERS ──
     if(phoneTimer>0){phoneTimer-=dt;if(phoneTimer<=0){phoneReversed=false;showToast('✅ Controls back to normal!',60);}}
@@ -714,7 +599,7 @@
 
     // ── MOVEMENT (spring system for smoothness) ──
     if(moveCool>0) moveCool--;
-    if(!pudSlide&&!pulloverActive){
+    if(!pudSlide){
       const gl=keys.ArrowLeft||keys.a||keys.A;
       const gr=keys.ArrowRight||keys.d||keys.D;
       const ml=phoneReversed?gr:gl;
@@ -724,87 +609,24 @@
     }
     playerX+=(targetX-playerX)*0.2;
 
-    // ── PULLOVER SEQUENCE ──
-    if(pulloverActive){
-      pulloverTimer-=dt;
-      if(pulloverTimer>1.67) targetX=LANES[pulloverLane];
-      if(pulloverTimer<=1.67&&!pulloverMidShown){pulloverMidShown=true;}
-      if(pulloverTimer<=0){
-        pulloverActive=false;
-        targetX=LANES[1]; lane=1;
-        celineRescueActive=true; celineRescueTimer=3.33;
-        nigelYellTimer=9999;
-        showAnn('BACK ON THE ROAD 🚗','Find Céline — she can replace Nigel!','#B8B2D8',180);
-      }
-    }
-
-    // ── NIGEL MECHANICS ──
-    if(nigelOnBoard&&!celineOnBoard&&!pulloverActive){
-      if(nigelMutterTimer>0) nigelMutterTimer-=dt;
-      else{
-        showSpeech(`😤 "${NIGEL_MUTTER[Math.floor(Math.random()*NIGEL_MUTTER.length)]}"`,130);
-        nigelMutterTimer=7.0+Math.random()*4.33;
-      }
-      if(nigelYellTimer>0) nigelYellTimer-=dt;
-      else if(nigelYells<2&&!nigelYellPending){
-        nigelYellPending=true;
-        const line=NIGEL_YELL[Math.floor(Math.random()*NIGEL_YELL.length)];
-        nigelYellActive=true; nigelYellAnimTimer=2.5;
-        nigelYells++;
-        playNigel(); shakeAmt=7;
-        hours=Math.max(0,hours-5); hourFlash=0.8; showToast("⏱ −5 hrs logged",80);
-        if(nigelYells<2){
-          showAnn(`😤 ${line}`,'-5 hrs logged','#FF4400',180);
-          nigelYellTimer=9.3+Math.random()*5.0;
-          nigelYellCooldown=2.0;
-        } else {
-          showToast('😤  ...',30);
-          setTimeout(()=>{
-            pulloverActive=true; pulloverTimer=4.33; pulloverLane=Math.random()<0.5?0:2;
-            ann={text:'',subtext:'',color:'#F5C400',timer:0,max:0};
-            nigelYellPending=false;
-          },800);
-        }
-      }
-      if(nigelYellAnimTimer>0) nigelYellAnimTimer-=dt;
-      else nigelYellActive=false;
-    }
-
-    // ── NIGEL TOKEN (initial) ──
-    if(!nigelOnBoard&&!celineOnBoard&&nigelToken){
-      nigelToken.y+=(effSpd+2)*dt*60;
-      if(Math.abs(nigelToken.x-playerX)<30&&Math.abs(nigelToken.y-(H-100))<42){
-        nigelOnBoard=true; nigelToken=null;
-        hoursActive=true;
-        nigelMutterTimer=5.0; nigelYellTimer=10.8;
-        spawnParticles(playerX,H-100,'#CC3300');
-        showAnn("NIGEL ON BOARD 😤","You Absolute Muppet School of Motoring",'#FF4400',210);
-        nigelIntroTimer=1.8;
-        playNigel();
-      } else if(nigelToken.y>H+40){
-        nigelToken.y=-36; nigelToken.x=LANES[Math.floor(Math.random()*3)];
-      }
-    }
-
-    // ── CÉLINE RESCUE ──
-    if(celineRescueActive&&!celineOnBoard){
-      if(celineRescueTimer>0) celineRescueTimer-=dt;
-      else if(!celineRescue){
+    // ── CÉLINE PICKUP ──
+    if(!celineOnBoard){
+      if(celineTokenTimer>0) celineTokenTimer-=dt;
+      else if(!celineToken){
         const l=Math.random()<0.5?0:2;
-        celineRescue={x:LANES[l],y:-36,lane:l,spd:effSpd+3.8};
+        celineToken={x:LANES[l],y:-36,lane:l,spd:effSpd+3.8};
       }
     }
-    if(celineRescue){
-      celineRescue.y+=celineRescue.spd*dt*60;
-      if(Math.abs(celineRescue.x-playerX)<30&&Math.abs(celineRescue.y-(H-100))<42){
-        celineOnBoard=true; nigelOnBoard=false; celineRescue=null; celineRescueActive=false;
+    if(celineToken){
+      celineToken.y+=celineToken.spd*dt*60;
+      if(Math.abs(celineToken.x-playerX)<30&&Math.abs(celineToken.y-(H-100))<42){
+        celineOnBoard=true; celineToken=null; hoursActive=true;
         spawnParticles(playerX,H-100,'#B8B2D8');
-        playNigel();
-        showAnn("Fine! I'm going to the pub!", "Nigel leaves.", '#FF4400', 160);
-        setTimeout(()=>{playCeline();showAnn('👩‍⚕️ CÉLINE ON BOARD!','Hi, welcome to Gentle Path. Let\'s make progress.','#B8B2D8',180);},2200);
+        playCeline();
+        showAnn('👩‍⚕️ CÉLINE ON BOARD!','Hi, welcome to Gentle Path. Let\'s make progress.','#B8B2D8',180);
         spawnCollectible();
-      } else if(celineRescue.y>H+40){
-        celineRescue=null; celineRescueTimer=4.17;
+      } else if(celineToken.y>H+40){
+        celineToken=null; celineTokenTimer=4.17;
       }
     }
 
@@ -831,7 +653,7 @@
     // ── OBSTACLES ──
     const coolBase=isEndless?Math.max(0.30,0.92-kmDriven*0.005):Math.max(0.7,2.5-mainStage*0.23);
     obsCool-=dt;
-    if(obsCool<=0&&(nigelOnBoard||celineOnBoard||isEndless)){
+    if(obsCool<=0&&(celineOnBoard||isEndless)){
       spawnObstacle(); obsCool=coolBase+Math.random()*0.92;
     }
     obstacles.forEach(o=>o.y+=(effSpd+0.8)*dt*60);
@@ -862,14 +684,10 @@
 
     // ── DRAW ──
     updateDrawParticles();
-    if(!nigelOnBoard&&nigelToken) drawNigelToken(nigelToken);
-    if(celineRescue) drawCelineRescue(celineRescue);
+    if(celineToken) drawCelineToken(celineToken);
     if(collectible) drawCollectible(collectible);
     obstacles.forEach(drawObstacle);
     drawVehicle(playerX,H-100);
-    if(nigelYellActive) drawRageLines(playerX,H-100);
-    drawSpeechBubble(dt);
-    if(pulloverActive) drawTears();
     drawNight();
     drawHUD();
     drawToast(dt);
@@ -892,7 +710,7 @@
   canvas.addEventListener('touchmove',e=>{
     e.preventDefault();
     const active=gamePhase==='playing'||gamePhase==='endless';
-    if(!active||touchStartX===null||pudSlide||pulloverActive) return;
+    if(!active||touchStartX===null||pudSlide) return;
     const dx=e.touches[0].clientX-touchStartX;
     const ml=phoneReversed?dx>20:dx<-20;
     const mr=phoneReversed?dx<-20:dx>20;
@@ -924,7 +742,7 @@
       return;
     }
     const active=gamePhase==='playing'||gamePhase==='endless';
-    if(active&&!pudSlide&&!pulloverActive){
+    if(active&&!pudSlide){
       const ml=phoneReversed?tx>W/2:tx<W/2;
       const mr=phoneReversed?tx<W/2:tx>W/2;
       if(ml&&lane>0&&moveCool<=0){lane--;targetX=LANES[lane];moveCool=13;playerVX=0;}
