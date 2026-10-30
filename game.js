@@ -107,8 +107,8 @@
 
   // ══ ROAD ═══════════════════════════════════════════════
   function drawRoad() {
-    ctx.fillStyle='#252030'; ctx.fillRect(0,0,W,H);
-    ctx.fillStyle='#1A1525';
+    ctx.fillStyle='#26352e'; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#1b2621';
     ctx.fillRect(0,0,18,H); ctx.fillRect(W-18,0,18,H);
     for(let y=(roadOffset%40)-40;y<H+40;y+=40){
       ctx.fillStyle=(Math.floor((y+roadOffset)/40)%2===0)?'#CC2222':'#fff';
@@ -448,7 +448,7 @@
       const a=Math.min(1,t.timer/20);
       const yOff=(toastQueue.length-1-i)*62;
       ctx.save(); ctx.globalAlpha=a;
-      ctx.fillStyle='rgba(26,21,48,0.96)'; ctx.beginPath(); ctx.roundRect(W/2-158,H-96-yOff,316,58,[14]); ctx.fill();
+      ctx.fillStyle='rgba(38,53,46,0.96)'; ctx.beginPath(); ctx.roundRect(W/2-158,H-96-yOff,316,58,[14]); ctx.fill();
       ctx.fillStyle='white'; ctx.font='bold 16px Nunito,sans-serif';
       ctx.textAlign='center'; ctx.textBaseline='middle';
       wrapText(ctx,t.msg,W/2,H-74-yOff,290,20);
@@ -465,7 +465,7 @@
     const alpha=Math.min(fadeIn,fadeOut);
     ctx.save(); ctx.globalAlpha=Math.max(0,alpha);
     const pw=316,ph=ann.subtext?94:68,cy=64+ph/2;
-    ctx.fillStyle='rgba(20,14,40,0.93)'; ctx.beginPath(); ctx.roundRect(W/2-pw/2,cy-ph/2,pw,ph,[16]); ctx.fill();
+    ctx.fillStyle='rgba(38,53,46,0.93)'; ctx.beginPath(); ctx.roundRect(W/2-pw/2,cy-ph/2,pw,ph,[16]); ctx.fill();
     ctx.strokeStyle=ann.color; ctx.lineWidth=2.5; ctx.beginPath(); ctx.roundRect(W/2-pw/2,cy-ph/2,pw,ph,[16]); ctx.stroke();
     ctx.fillStyle=ann.color; ctx.beginPath(); ctx.roundRect(W/2-pw/2,cy-ph/2,pw,5,[16,16,0,0]); ctx.fill();
     ctx.fillStyle=ann.color; ctx.font='bold 20px Nunito,sans-serif';
@@ -500,17 +500,17 @@
 
   // ══ SCREENS ══════════════════════════════════════════════
   function drawStart() {
-    ctx.fillStyle='rgba(20,14,40,0.94)'; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='rgba(38,53,46,0.94)'; ctx.fillRect(0,0,W,H);
     ctx.font='44px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
     ctx.fillText('🚗',W/2,H/2-144);
-    ctx.fillStyle='#F5C400'; ctx.font='bold 26px Cormorant Garamond,serif';
+    ctx.fillStyle='#d1bd6d'; ctx.font='bold 26px Cormorant Garamond,serif';
     ctx.fillText('Your Driving Journey',W/2,H/2-100);
     ctx.fillStyle='rgba(250,246,238,0.72)'; ctx.font='14px Nunito,sans-serif';
     const copyBottom=wrapText(ctx,'Pick up Celine, earn your L and P plates and become a Gentle Path Driving Star!',W/2,H/2-64,316,20);
     ctx.font='13px Nunito,sans-serif';
     wrapText(ctx,'Use keyboard arrows < and > to drive, or tap left / right on mobile',W/2,copyBottom+26,316,18);
-    ctx.fillStyle='#7B6FB5'; ctx.beginPath(); ctx.roundRect(W/2-84,H/2+30,168,48,[24]); ctx.fill();
-    ctx.fillStyle='#d1bd6d'; ctx.font='bold 18px Nunito,sans-serif'; ctx.fillText('Let’s go',W/2,H/2+54);
+    ctx.fillStyle='#d1bd6d'; ctx.beginPath(); ctx.roundRect(W/2-84,H/2+30,168,48,[24]); ctx.fill();
+    ctx.fillStyle='#26352e'; ctx.font='bold 18px Nunito,sans-serif'; ctx.fillText('Let’s go',W/2,H/2+54);
   }
 
   function drawWin(dt) {
@@ -522,7 +522,7 @@
     } else {
       winPanelA=Math.min(1,winPanelA+dt*2.4);
       ctx.save(); ctx.globalAlpha=winPanelA;
-      ctx.fillStyle='rgba(26,14,48,0.94)'; ctx.beginPath(); ctx.roundRect(W/2-158,H/2-140,316,286,[18]); ctx.fill();
+      ctx.fillStyle='rgba(38,53,46,0.94)'; ctx.beginPath(); ctx.roundRect(W/2-158,H/2-140,316,286,[18]); ctx.fill();
       ctx.strokeStyle='#7B6FB5'; ctx.lineWidth=2; ctx.stroke();
       ctx.font='34px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('🏆',W/2,H/2-104);
       ctx.fillStyle='#F5C400'; ctx.font='bold 25px Cormorant Garamond,serif'; ctx.fillText('Licence Earned!',W/2,H/2-68);
@@ -539,7 +539,7 @@
   }
 
   function drawGameOver() {
-    ctx.fillStyle='rgba(20,14,40,0.96)'; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='rgba(38,53,46,0.96)'; ctx.fillRect(0,0,W,H);
     ctx.font='38px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('💥',W/2,H/2-90);
     ctx.fillStyle='#CC2222'; ctx.font='bold 25px Cormorant Garamond,serif'; ctx.fillText('Game Over',W/2,H/2-54);
     ctx.fillStyle='#F5C400'; ctx.font='bold 34px Nunito,sans-serif'; ctx.fillText(`${Math.floor(kmDriven)} km`,W/2,H/2-12);
