@@ -350,7 +350,7 @@
         const dir=lane===0?1:(lane===2?-1:(Math.random()<0.5?-1:1));
         const nl=Math.max(0,Math.min(2,lane+dir));
         pudSlide=true; pudSlideLane=nl; pudTimer=0.70;
-        showAnn('💦 SLIPPERY!','Forced lane slide — hang on!','#7FBCD2',110);
+        showAnn('💦 SLIPPERY!','Forced lane slide, hang on!','#7FBCD2',110);
         shakeAmt=3; playSlide(); break;
       case 'phone':
         phoneReversed=true; phoneTimer=4.0;
@@ -358,7 +358,7 @@
         shakeAmt=4; playReverse(); break;
       case 'camera':
         camSlow=2.83;
-        showAnn('📸 SPEED CAMERA!','$264 fine 💸  — slowing down...','#FFD700',140);
+        showAnn('📸 SPEED CAMERA!','$264 fine 💸, slowing down...','#FFD700',140);
         shakeAmt=5; playFlash(); break;
       default:
         showAnn('🚧 CONE!','Watch the road!','#FF8833',90);
@@ -571,7 +571,7 @@
     // Night announcement (once)
     if(isPlaying&&mainStage>=3&&!nightShown&&nightAlpha>0.1){
       nightShown=true;
-      showAnn('🌙 NIGHT DRIVING','Visibility reduced — 15 night hours required!','#7B6FB5',170);
+      showAnn('🌙 NIGHT DRIVING','Visibility reduced. 15 night hours required!','#7B6FB5',170);
     }
 
     // Endless km
@@ -676,7 +676,7 @@
     if(closeCooldown<=0){
       for(const o of obstacles){
         if(Math.abs(o.x-playerX)<44&&Math.abs(o.x-playerX)>26&&Math.abs(o.y-(H-100))<36){
-          if(o.type==='phone'){showToast('📱 Watch out — controls will swap!',80);}
+          if(o.type==='phone'){showToast('📱 Watch out, controls will swap!',80);}
           else{showToast('😅 Close call! +speed boost',55);speed=Math.min(speed+0.5,isEndless?9:6);}
           closeCooldown=1.5; break;
         }
