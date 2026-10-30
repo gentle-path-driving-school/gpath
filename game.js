@@ -502,14 +502,15 @@
   function drawStart() {
     ctx.fillStyle='rgba(20,14,40,0.94)'; ctx.fillRect(0,0,W,H);
     ctx.font='44px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    ctx.fillText('🚗',W/2,H/2-112);
+    ctx.fillText('🚗',W/2,H/2-144);
     ctx.fillStyle='#F5C400'; ctx.font='bold 26px Cormorant Garamond,serif';
-    ctx.fillText('Your Driving Journey',W/2,H/2-68);
+    ctx.fillText('Your Driving Journey',W/2,H/2-100);
     ctx.fillStyle='rgba(250,246,238,0.72)'; ctx.font='14px Nunito,sans-serif';
-    ctx.fillText('Pick up Céline.',W/2,H/2-38);
-    ctx.fillText('Earn your plates. Log your hours.',W/2,H/2-16);
+    const copyBottom=wrapText(ctx,'Pick up Celine, earn your L and P plates and become a Gentle Path Driving Star!',W/2,H/2-64,316,20);
+    ctx.font='13px Nunito,sans-serif';
+    wrapText(ctx,'Use keyboard arrows < and > to drive, or tap left / right on mobile',W/2,copyBottom+26,316,18);
     ctx.fillStyle='#7B6FB5'; ctx.beginPath(); ctx.roundRect(W/2-84,H/2+30,168,48,[24]); ctx.fill();
-    ctx.fillStyle='white'; ctx.font='bold 18px Nunito,sans-serif'; ctx.fillText("Let's Go →",W/2,H/2+54);
+    ctx.fillStyle='white'; ctx.font='bold 18px Nunito,sans-serif'; ctx.fillText('Let’s go',W/2,H/2+54);
   }
 
   function drawWin(dt) {
