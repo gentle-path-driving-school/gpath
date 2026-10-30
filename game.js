@@ -47,7 +47,7 @@
     {id:'lplate', color:'#F5C400', annText:'L PLATE 🟨',      annSub:'Learning begins. Log those hours.',    hoursNeeded:0  },
     {id:'logbook',color:'#7FBCD2', annText:'📓 LOGBOOK',       annSub:'Hours ticking faster now!',            hoursNeeded:18 },
     {id:'p1',     color:'#CC2222', annText:'🔴 P1 PLATES!',    annSub:'75 hours logged. Provisional driver!', hoursNeeded:75 },
-    {id:'p2',     color:'#2E8B3E', annText:'🟢 P2 PLATES!',    annSub:'120 hours. Almost there!',            hoursNeeded:120},
+    {id:'p2',     color:'#2E8B3E', annText:'🟢 P2 PLATES!',    annSub:'1 year. Almost there!',            hoursNeeded:120},
     {id:'full',   color:'#7B6FB5', annText:'🏁 FULL LICENCE!', annSub:'You absolute legend.',                hoursNeeded:150},
   ];
 
@@ -358,7 +358,7 @@
         shakeAmt=4; playReverse(); break;
       case 'camera':
         camSlow=2.83;
-        showAnn('📸 SPEED CAMERA!','$264 fine 💸, slowing down...','#FFD700',140);
+        showAnn('📸 SPEED CAMERA!','You got a fine 💸 slow down...','#FFD700',140);
         shakeAmt=5; playFlash(); break;
       default:
         showAnn('🚧 CONE!','Watch the road!','#FF8833',90);
