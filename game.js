@@ -464,16 +464,16 @@
     const fadeOut=Math.min(1,ann.timer/18);
     const alpha=Math.min(fadeIn,fadeOut);
     ctx.save(); ctx.globalAlpha=Math.max(0,alpha);
-    const pw=316,ph=ann.subtext?94:68;
-    ctx.fillStyle='rgba(20,14,40,0.93)'; ctx.beginPath(); ctx.roundRect(W/2-pw/2,H/2-ph/2,pw,ph,[16]); ctx.fill();
-    ctx.strokeStyle=ann.color; ctx.lineWidth=2.5; ctx.beginPath(); ctx.roundRect(W/2-pw/2,H/2-ph/2,pw,ph,[16]); ctx.stroke();
-    ctx.fillStyle=ann.color; ctx.beginPath(); ctx.roundRect(W/2-pw/2,H/2-ph/2,pw,5,[16,16,0,0]); ctx.fill();
+    const pw=316,ph=ann.subtext?94:68,cy=64+ph/2;
+    ctx.fillStyle='rgba(20,14,40,0.93)'; ctx.beginPath(); ctx.roundRect(W/2-pw/2,cy-ph/2,pw,ph,[16]); ctx.fill();
+    ctx.strokeStyle=ann.color; ctx.lineWidth=2.5; ctx.beginPath(); ctx.roundRect(W/2-pw/2,cy-ph/2,pw,ph,[16]); ctx.stroke();
+    ctx.fillStyle=ann.color; ctx.beginPath(); ctx.roundRect(W/2-pw/2,cy-ph/2,pw,5,[16,16,0,0]); ctx.fill();
     ctx.fillStyle=ann.color; ctx.font='bold 20px Nunito,sans-serif';
     ctx.textAlign='center'; ctx.textBaseline='middle';
-    wrapText(ctx,ann.text,W/2,ann.subtext?H/2-16:H/2,290,26);
+    wrapText(ctx,ann.text,W/2,ann.subtext?cy-16:cy,290,26);
     if(ann.subtext){
       ctx.fillStyle='rgba(250,246,238,0.85)'; ctx.font='13px Nunito,sans-serif';
-      wrapText(ctx,ann.subtext,W/2,H/2+16,280,18);
+      wrapText(ctx,ann.subtext,W/2,cy+16,280,18);
     }
     ctx.restore(); ann.timer-=dt*60;
   }
