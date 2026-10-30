@@ -510,7 +510,7 @@
     ctx.font='13px Nunito,sans-serif';
     wrapText(ctx,'Use keyboard arrows < and > to drive, or tap left / right on mobile',W/2,copyBottom+26,316,18);
     ctx.fillStyle='#7B6FB5'; ctx.beginPath(); ctx.roundRect(W/2-84,H/2+30,168,48,[24]); ctx.fill();
-    ctx.fillStyle='white'; ctx.font='bold 18px Nunito,sans-serif'; ctx.fillText('Let’s go',W/2,H/2+54);
+    ctx.fillStyle='#d1bd6d'; ctx.font='bold 18px Nunito,sans-serif'; ctx.fillText('Let’s go',W/2,H/2+54);
   }
 
   function drawWin(dt) {
