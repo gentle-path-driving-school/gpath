@@ -13,7 +13,7 @@
   const bookingUrl = 'https://www.gentlepathdriving.com.au/home#driving-lessons';
 
   function openBooking() {
-    window.open(bookingUrl, '_blank', 'noopener,noreferrer');
+    window.top.location.href = bookingUrl;
   }
 
   // ══ AUDIO ══════════════════════════════════════════════
