@@ -10,20 +10,7 @@
   const LANES = [LANE_W*0.5, LANE_W*1.5, LANE_W*2.5];
   const BASE_HR = 4, BONUS_HR = 8;
 
-  // Use the embedding Squarespace site's current domain so this continues to
-  // work after the custom domain is connected. The fallback supports testing
-  // the game directly from GitHub Pages.
-  const bookingUrl = (() => {
-    try {
-      if (document.referrer) {
-        const referrer = new URL(document.referrer);
-        if (referrer.protocol === 'https:' || referrer.protocol === 'http:') {
-          return new URL('/contact', referrer.origin).href;
-        }
-      }
-    } catch (error) {}
-    return 'https://hexahedron-khaki-r73g.squarespace.com/contact';
-  })();
+  const bookingUrl = 'https://www.gentlepathdriving.com.au/home#driving-lessons';
 
   function openBooking() {
     window.open(bookingUrl, '_blank', 'noopener,noreferrer');
